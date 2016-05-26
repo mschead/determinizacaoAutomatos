@@ -1,8 +1,7 @@
 import json
 
 fechoGlobal = {}
-epsilon = True
-
+deterministico = False
 
 
 def algoritmoSemEpsilon(estados):
@@ -29,9 +28,9 @@ def algoritmoComEpsilon(estados):
 
 	lista = hashFinal.values()
 
-	while len(lista) != 0: #for estado, transicao in hashFinal.items():
+	while len(lista) != 0: 
 		transicoes = lista.pop(0)
-		for simbolo, estadoDestino in transicoes.items():#transicao.items():
+		for simbolo, estadoDestino in transicoes.items():
 			estadoNovo = transformToString(estadoDestino)
 			if (not estadoNovo in hashFinal) and (not estadoNovo == ""):
 				hashFinal[estadoNovo] = obterHashFinal(estadoDestino, estados)
@@ -62,10 +61,10 @@ def obterHashFinal(estadoDestino, estados):
 	for letra in alfabeto:
 		for transicao in transicoes:
 			if not transicao[letra] == []:
-				if epsilon == True:
-					estadosResultantes = estadosResultantes + obterFechoResultanteEstados(transicao[letra])
+				if deterministico == False:
+					estadosResultantes += obterFechoResultanteEstados(transicao[letra])
 				else:
-					estadosResultantes += estadosResultantes + transicao[letra]
+					estadosResultantes += transicao[letra]
 
 		hashFinal[letra] = list(set(estadosResultantes))
 		estadosResultantes = []
@@ -75,7 +74,6 @@ def obterHashFinal(estadoDestino, estados):
 
 def obterFechoResultanteEstados(estado):
 	fecho = []
-
 	for e in estado:
 		fecho += fechoGlobal[e]
 
@@ -103,25 +101,30 @@ def obterFechoEstado(estado, estados):
 
 def rotinaPrincipal():
 
+	global deterministico
+	global fechoGlobal
+
 	#obtem os estados e transicoes da maquina descritos em formato JSON
 	with open("afnd.json") as json_file:
 		estados = json.load(json_file)
 
+	#verifica se eh deterministico
+	deterministico = estados['deterministico']
+	del estados['deterministico']
 
 	#obtem os fechos, caso possua transicoes epsilon
-	if epsilon == True:
+	if deterministico == False:
 		for estado, transicao in estados.items():
 			fechoGlobal[estado] = obterFechoEstado(estado, estados)
 
-	if epsilon:
-		estados = algoritmoComEpsilon(estados)
-	else:
+	if deterministico:
 		estados = algoritmoSemEpsilon(estados)
-
+	else:
+		estados = algoritmoComEpsilon(estados)
 
 	#salva a maquina resultante em formato JSON
 	with open('resultado.json', 'w') as output:
-		json.dump(estados, output)#, indent=1)
+		json.dump(estados, output, indent=1)
 
 
 rotinaPrincipal()
