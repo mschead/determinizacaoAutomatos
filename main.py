@@ -1,16 +1,10 @@
 from maquina import Maquina
+import sys
+
+maquina = Maquina(sys.argv[1])
+maquina.gerar_automato()
 
 
-
-def rotinaPrincipal():
-
-
-	maquina = Maquina()
-	maquina.automato_com_epsilon()
-	maquina.gerar_arquivo_maquina()
-
-
-rotinaPrincipal()
 
 
 

@@ -2,8 +2,31 @@ import json
 
 class Maquina:
 
-	def __init__(self):	
-		self.preparar_maquina()
+	def __init__(self, arquivo):	
+		self.preparar_maquina(arquivo)
+
+	def gerar_automato(self):
+		if self.usa_epsilon:
+			automato = {}
+			automato[self.to_string(self.estado_inicial)] = self.estado_com_transicoes(self.estado_inicial)
+			self.determinizar(automato)
+		else:
+			self.determinizar(self.automato)
+		self.gerar_resultado()
+
+	def determinizar(self, automato):
+		lista = automato.values()
+
+		while len(lista) != 0: 
+			transicoes = lista.pop(0)
+			for simbolo, estado_destino in transicoes.items():
+				estado_novo = self.to_string(estado_destino)
+				if (not estado_novo in automato) and (not estado_novo == ""):
+					estado_com_transicoes = self.estado_com_transicoes(estado_destino)
+					automato[estado_novo] = estado_com_transicoes
+					lista.append(estado_com_transicoes)
+		
+		self.automato = automato
 
 	def automato_sem_epsilon(self):
 		lista = self.automato.values()
@@ -18,6 +41,26 @@ class Maquina:
 					lista.append(estado_com_transicoes)
 
 
+	def automato_com_epsilon(self):
+		automato_novo = {}
+		automato_novo[self.to_string(self.estado_inicial)] = self.estado_com_transicoes(self.estado_inicial)
+
+		lista = automato_novo.values()
+
+		while len(lista) != 0: 
+			transicoes = lista.pop(0)
+			for simbolo, estado_destino in transicoes.items():
+				estado_novo = self.to_string(estado_destino)
+				if (not estado_novo in automato_novo) and (not estado_novo == ""):
+					estado_com_transicoes = self.estado_com_transicoes(estado_destino)
+					automato_novo[estado_novo] = estado_com_transicoes
+					lista.append(estado_com_transicoes)
+
+		self.automato = automato_novo
+
+
+
+	#obtem um estado com suas respectivas transicoes
 	def estado_com_transicoes(self, estado_destino):
 		estado_com_transicoes = {}
 		transicoes_estado_destino = []
@@ -39,24 +82,6 @@ class Maquina:
 
 		return estado_com_transicoes
 
-
-
-	def automato_com_epsilon(self):
-		automato_novo = {}
-		automato_novo[self.to_string(self.estado_inicial)] = self.estado_com_transicoes(self.estado_inicial)
-
-		lista = automato_novo.values()
-
-		while len(lista) != 0: 
-			transicoes = lista.pop(0)
-			for simbolo, estado_destino in transicoes.items():
-				estado_novo = self.to_string(estado_destino)
-				if (not estado_novo in automato_novo) and (not estado_novo == ""):
-					estado_com_transicoes = self.estado_com_transicoes(estado_destino)
-					automato_novo[estado_novo] = estado_com_transicoes
-					lista.append(estado_com_transicoes)
-
-		self.automato = automato_novo
 
 
 	#obtem o fecho de um conjunto de estados
@@ -93,9 +118,9 @@ class Maquina:
 
 
 	#Abre o arquivo JSON com a maquina e guarda atributos importantes para determinizar
-	def preparar_maquina(self):
+	def preparar_maquina(self, arquivo):
 
-		with open("afnd.json") as json_file:
+		with open(arquivo) as json_file:
 			self.automato = json.load(json_file)
 
 		self.usa_epsilon = self.automato['usa_epsilon']
@@ -118,7 +143,7 @@ class Maquina:
 
 
 	#Salva num arquivo JSON a maquina com os estados e suas transicoes finais
-	def gerar_arquivo_maquina(self):
+	def gerar_resultado(self):
 		with open('resultado.json', 'w') as output:
 			json.dump(self.automato, output, indent=1)
 
