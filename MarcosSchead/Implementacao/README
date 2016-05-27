@@ -1,0 +1,17 @@
+UNIVERSIDADE FEDERAL DE SANTA CATARINA - UFSC
+DEPARTAMENTO DE INFORMÁTICA E ESTATÍSTICA - INE
+Nome: Marcos Schead dos Santos; Matrícula: 14200750
+Data: 26/05/2016
+
+Este trabalho foi feito e testado na linguagem Python 2.7.6.
+Para executá-lo, basta abrir o terminal e digitar:
+
+python main.py teste1Afnd.json
+
+De modo que, conforme mostra a extensão, deve ser um arquivo
+no formato JSON. A forma de especificar a máquina está descrita
+no relatório do trabalho.
+Um arquivo chamado teste1Afnd.out.json irá ser gerado,
+com a descrição do autômato resultante.
+
+

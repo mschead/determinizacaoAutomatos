@@ -117,7 +117,7 @@ class Maquina:
 
 	#Salva num arquivo JSON a maquina com os estados e suas transicoes finais
 	def gerar_resultado(self):
-		with open(self.arquivo[:-5] + '-resultado.json', 'w') as output:
+		with open(self.arquivo[:-5] + '.out.json', 'w') as output:
 			json.dump(self.automato, output, indent=1)
 
 
