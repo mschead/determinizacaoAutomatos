@@ -14,7 +14,9 @@ class Maquina:
 			self.determinizar(automato)
 		else:
 			self.determinizar(self.automato)
-		
+	
+		self.automato["$" + self.to_string(self.estado_inicial)] = self.automato[self.to_string(self.estado_inicial)]
+		del self.automato[self.to_string(self.estado_inicial)]
 		self.gerar_resultado()
 
 
